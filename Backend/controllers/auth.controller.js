@@ -4,7 +4,8 @@ const Authuser = require("../models/authuser.model");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const dotenv = require("dotenv");
-const { jwtDecode } = require("jwt-decode");
+const verifyToken = require("../util/verifyToken");
+// const { jwtDecode } = require("jwt-decode");
 dotenv.config();
 
 JWT_KEY = process.env.KEY;
@@ -71,11 +72,12 @@ const signup = async (req, res, next) => {
 const useGoogle = async (req, res, next) => {
   try {
     let token = req.body.tokenId;
-    const response = jwtDecode(token);
+    // const response = jwtDecode(token);
     if (!!!token) {
       throw new ErrorHandler(400, "Invalid credentials");
     }
     // console.log(response.email);
+    const response = await verifyToken(token);
     let authuser = await Authuser.findOne({
       email: response.email,
     });
