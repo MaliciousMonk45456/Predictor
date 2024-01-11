@@ -5,12 +5,21 @@ from flask_bcrypt import generate_password_hash, check_password_hash
 from flask import request
 from flask_jwt_extended import create_access_token
 import datetime
+import os
+from dotenv import load_dotenv
+load_dotenv()
+
+DATABASE=os.getenv("DATABASE")
+USER=os.getenv("USER")
+PASSWORD=os.getenv("PASSWORD")
+HOST=os.getenv("HOST")
+PORT=os.getenv("PORT")
 
 class RegisterApi(Resource):
     def post(self):
         body = request.json
-        conn = psycopg2.connect(database="flask_db", user="postgres", 
-                            password="123456", host="localhost", port="5432") 
+        conn = psycopg2.connect(database=DATABASE, user=USER, 
+                            password=PASSWORD, host=HOST, port=PORT) 
         cur = conn.cursor() 
         password = generate_password_hash(body['password']).decode('utf8')
         cur.execute("INSERT INTO users (email, password) VALUES (%s,%s);",(body['username'],password))
@@ -24,8 +33,8 @@ class RegisterApi(Resource):
 class LoginApi(Resource):
     def post(self):
         body = request.get_json()
-        conn = psycopg2.connect(database="flask_db", user="postgres", 
-                        password="123456", host="localhost", port="5432") 
+        conn = psycopg2.connect(database=DATABASE, user=USER, 
+                        password=PASSWORD, host=HOST, port=PORT) 
         cur = conn.cursor() 
         cur.execute("SELECT * FROM users WHERE email=(%s);", (body['username'],))
         data = cur.fetchall() 
@@ -41,3 +50,16 @@ class LoginApi(Resource):
         # print(data[0][0])
         token={"token":access_token}
         return token,200
+    
+# class DeleteApi(Resource):
+#     def delete(self):
+#         body = request.get_json()
+#         conn = psycopg2.connect(database=DATABASE, user=USER, 
+#                         password=PASSWORD, host=HOST, port=PORT) 
+#         cur = conn.cursor() 
+#         cur.execute("DELETE FROM users WHERE email=(%s);", (body['username'],))
+#         conn.commit()
+#         cur.close() 
+#         conn.close()
+#         message={"message":"User deleted successfully"}
+#         return message,200
