@@ -78,6 +78,8 @@ class LoginApi(Resource):
             # print(data[0][0])
             token={"token":access_token}
             return token,200
+        except UnauthorizedError:
+            raise UnauthorizedError
         except psycopg2.errors.ProgrammingError or psycopg2.errors.InternalError or psycopg2.errors.DataError or psycopg2.errors.NotSupportedError or psycopg2.errors.DatabaseError or psycopg2.errors.InterfaceError or psycopg2.errors.OperationalError:
             raise DatabaseError
         except:
