@@ -15,13 +15,16 @@ class UnauthorizedError(HTTPException):
 class DatabaseError(HTTPException):
     pass
 
+class MovieNotFoundError(HTTPException):
+    pass
+
 errors = {
     "InternalServerError": {
         "message": "Something went wrong",
         "status": 500
     },
      "SchemaValidationError": {
-         "message": "Invalid Request Fields",
+         "message": "Invalid Input Fields",
          "status": 400
      },
      "UserAlreadyExistsError": {
@@ -35,5 +38,9 @@ errors = {
     "DatabaseError": {
         "message": "Database Error",
         "status": 500
+    },
+    "MovieNotFoundError": {
+        "message": "Movie not found",
+        "status": 400
     }
 }

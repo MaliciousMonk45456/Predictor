@@ -29,7 +29,7 @@ def validator(f):
         pat = re.compile(reg)
         if(re.fullmatch(regex, body['username']) and re.search(pat, body['password'])):
             return f(*args, **kwargs)
-        return {"message":"Please enter valid email and password"},400
+        raise SchemaValidationError
     return decorated
 
 class RegisterApi(Resource):
