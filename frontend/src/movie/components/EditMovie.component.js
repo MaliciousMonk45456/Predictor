@@ -40,8 +40,8 @@ const EditForm = (props) => {
     const fetchMovies = async () => {
       try {
         const movie = await sendRequest(
-          // `http://localhost:5000/movie/${id}`,
-          process.env.REACT_APP_BACKEND_URI + "/movie/" + id
+          `http://localhost:5000/movie/${id}`,
+          // process.env.REACT_APP_BACKEND_URI + "/movie/" + id
         );
         // console.log("control");
         // console.log(user.genre);
@@ -82,8 +82,8 @@ const EditForm = (props) => {
       formData.append("year", formState.year.value);
       formData.append("average_rating", formState.average_rating.value);
       await sendRequest(
-        // `http://localhost:5000/movie/edit/${id}`,
-        process.env.REACT_APP_BACKEND_URI + "/movie/edit/" + id,
+        `http://localhost:5000/movie/edit/${id}`,
+        // process.env.REACT_APP_BACKEND_URI + "/movie/edit/" + id,
         "PUT",
         formData
       );

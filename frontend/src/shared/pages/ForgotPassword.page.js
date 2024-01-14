@@ -16,8 +16,8 @@ const ForgotPassword = () => {
     // console.log(formState);
     try {
       await sendRequest(
-        // "http://localhost:5000/forgot/sendotp",
-        process.env.REACT_APP_BACKEND_URI + "/forgot/sendotp",
+        "http://localhost:5000/forgot/sendotp",
+        // process.env.REACT_APP_BACKEND_URI + "/forgot/sendotp",
         "POST",
         JSON.stringify({
           email: formState.email.value,

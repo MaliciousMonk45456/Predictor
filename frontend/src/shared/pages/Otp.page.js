@@ -20,8 +20,8 @@ const Otp = () => {
     // console.log(formState);
     try {
       await sendRequest(
-        // "http://localhost:5000/forgot/verifyotp",
-        process.env.REACT_APP_BACKEND_URI + "/forgot/verifyotp",
+        "http://localhost:5000/forgot/verifyotp",
+        // process.env.REACT_APP_BACKEND_URI + "/forgot/verifyotp",
         "POST",
         JSON.stringify({
           email: email,

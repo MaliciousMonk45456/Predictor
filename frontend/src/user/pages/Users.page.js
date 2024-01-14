@@ -19,8 +19,7 @@ const Users = () => {
     const fetchUsers = async () => {
       try {
         const user = await sendRequest(
-          // `http://localhost:5000/user/${userId}`,
-          process.env.REACT_APP_BACKEND_URI + "user/" + id,
+          `http://localhost:5000/user/${userId}`,
           "GET",
           null,
           {
@@ -39,33 +38,28 @@ const Users = () => {
     if (!!userId) {
       fetchUsers();
     }
-  }, [sendRequest, userId, token,id]);
+  }, [sendRequest, userId, token]);
 
   const handleClick = async (event) => {
     event.preventDefault();
     try {
-      await sendRequest(
-        process.env.REACT_APP_BACKEND_URI + "user/" + id,
-        "DELETE",
-        null,
-        {
-          Authorization: "Bearer " + token,
-        }
-      );
+      await sendRequest(`http://localhost:5000/user/${id}`, "DELETE", null, {
+        Authorization: "Bearer " + token,
+      });
       //   console.log(responseData);
       navigate("../");
     } catch (err) {
       console.log(err);
     }
   };
-
+  
   return (
     <div>
       {isloading && <h1>Loading...</h1>}
       {!isloading && error && <h1>{error}</h1>}
       {!isloading && !error && !!img && (
         <div>
-          <img src={process.env.REACT_APP_BACKEND_URI + img} alt="Preview" />
+          <img src={`http://localhost:5000/${img}`} alt="Preview" />
           {JSON.stringify(users)}
           <Button link="../../edituser/" text="Edit User Genre" id={id} />
           <button onClick={handleClick}>Delete User Genre</button>

@@ -8,7 +8,7 @@ const Movies = () => {
   useEffect(() => {
     const fetchUsers = async () => {
       try {
-        const movie = await sendRequest(process.env.REACT_APP_BACKEND_URI + "/movie");
+        const movie = await sendRequest("http://localhost:5000/movie");
         // console.log(user);
         setmovies(movie);
       } catch (err) {

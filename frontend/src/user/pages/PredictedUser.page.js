@@ -13,8 +13,8 @@ const PredictedUser = () => {
     const fetchPredictions = async () => {
       try {
         const responseData = await sendRequest(
-          // `http://localhost:5000/user/predict/${id}`,
-          process.env.REACT_APP_BACKEND_URI + "/user/predict/" + id,
+          `http://localhost:5000/user/predict/${id}`,
+          // process.env.REACT_APP_BACKEND_URI + "/user/predict/" + id,
           "GET",
           null,
           {

@@ -17,8 +17,8 @@ const AddExisting = () => {
     // console.log(formState);
     try {
       await sendRequest(
-        // "http://localhost:5000/movie/existing",
-        process.env.REACT_APP_BACKEND_URI + "/movie/existing",
+        "http://localhost:5000/movie/existing",
+        // process.env.REACT_APP_BACKEND_URI + "/movie/existing",
         "POST",
         JSON.stringify({
           datasetID: formState.datasetID.value,
