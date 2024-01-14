@@ -64,7 +64,8 @@ const AddForm = (props) => {
       formData.append("year", formState.year.value);
       formData.append("average_rating", formState.average_rating.value);
       await sendRequest(
-        "http://localhost:5000/movie/new",
+        // "http://localhost:5000/movie/new",
+        process.env.REACT_APP_BACKEND_URI + "/movie/new",
         "POST",
         formData,
       );

@@ -21,9 +21,11 @@ import AddFile from "./user/pages/AddFile.page";
 import "./App.css";
 import React from "react";
 
+require("dotenv").config();
+
 function App() {
   const { token, login, logout, userId, setterpayment, payment } = useAuth();
-
+  // console.log(process.env.REACT_APP_BACKEND_URI)
   let routes;
   if (token && payment) {
     routes = (
@@ -73,7 +75,7 @@ function App() {
     );
   }
   return (
-    <GoogleOAuthProvider clientId="142025258129-s20h2fatv4hma8rd7vfjpd9nq9lgqa44.apps.googleusercontent.com">
+    <GoogleOAuthProvider clientId={process.env.REACT_APP_GOOGLE_CLIENT_ID}>
       <Router>
         <AuthContext.Provider
           value={{

@@ -16,7 +16,8 @@ const Login = () => {
     try {
     //   console.log(jwtDecode(response.credential));
       const responseData = await sendRequest(
-        "http://localhost:5000/googlelogin",
+        // "http://localhost:5000/googlelogin",
+        process.env.REACT_APP_BACKEND_URI + "/googlelogin",
         "POST",
         JSON.stringify({
           tokenId: response.credential,

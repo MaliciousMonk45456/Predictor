@@ -27,11 +27,11 @@ connectDB(URI);
 
 startServer(app, PORT);
 
-// app.use(
-//   cors({ origin: "*", credentials: true, methods: "GET,POST,PUT,DELETE,PATCH" })
-// );
+app.use(
+  cors({ origin: "*", credentials: true, methods: "GET,POST,PUT,DELETE,PATCH" })
+);
 
-app.use(cors());
+// app.use(cors());
 app.use(bodyParser.json());
 
 // app.use(cookieParser())

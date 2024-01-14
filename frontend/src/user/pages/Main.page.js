@@ -2,6 +2,7 @@ import React, { useContext, useEffect, useState } from "react";
 import Button from "../../shared/components/Button.component";
 import { AuthContext } from "../../shared/context/auth.context";
 import { useHttp } from "../../shared/hooks/useHttp";
+require("dotenv").config();
 
 const Main = () => {
   const { isloading, error, sendRequest } = useHttp();
@@ -35,14 +36,14 @@ const Main = () => {
 
   const initPay = (data) => {
     const options = {
-      key: "rzp_test_xjaxBq2BPuHsBF",
+      key: process.env.REACT_APP_RAZORPAY_KEY,
       amount: data.amount,
       currency: data.currency,
       description: "Payment of 10 Rupees",
       order_id: data.id,
-      name: "Post Malone",
-      image:
-        "https://footballtoday.com/wp-content/uploads/2023/02/fbl-eur-c1-psg-bayern-munich-4-2048x1365.jpg",
+      name: "Recommendation System",
+      // image:
+      //   "https://footballtoday.com/wp-content/uploads/2023/02/fbl-eur-c1-psg-bayern-munich-4-2048x1365.jpg",
       retry: {
         enabled: false,
       },

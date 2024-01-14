@@ -62,7 +62,8 @@ const AddForm = (props) => {
       formData.append("genre", JSON.stringify(genre.genre));
       // console.log(formData);
       const responseData = await sendRequest(
-        "http://localhost:5000/user",
+        // "http://localhost:5000/user",
+        process.env.REACT_APP_BACKEND_URI+"/user",
         "POST",
         formData,
         {

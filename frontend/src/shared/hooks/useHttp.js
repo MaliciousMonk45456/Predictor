@@ -1,4 +1,6 @@
 import { useState, useCallback, useRef, useEffect } from "react";
+require('dotenv').config()
+
 
 export const useHttp = () => {
   const [isloading, setisloading] = useState(false);
@@ -11,6 +13,10 @@ export const useHttp = () => {
       setisloading(true);
       const httpAbortCtrl = new AbortController();
       activeHttpRequests.current.push(httpAbortCtrl);
+
+      // url=url.splice(0,23)
+      // url=url+process.env.REACT_APP_BACKEND_URI
+
 
       try {
         const response = await fetch(url, {

@@ -10,7 +10,8 @@ const AddFile = () => {
     const fetchfile = async () => {
       try {
         const file = await sendRequest(
-          `http://localhost:5000/file/check`,
+          // `http://localhost:5000/file/check`,
+          process.env.REACT_APP_BACKEND_URL + "/file/check",
           "GET",
           null,
           {
@@ -36,7 +37,8 @@ const AddFile = () => {
     const formData = new FormData();
     formData.append("file", event.target.file.files[0]);
     const responseData = await sendRequest(
-      "http://localhost:5000/file/upload",
+      // "http://localhost:5000/file/upload",
+      // process.env.REACT_APP_BACKEND_URL + "/file/upload",
       "POST",
       formData,
       {
@@ -50,7 +52,8 @@ const AddFile = () => {
   const clickHandler = async (event) => {
     event.preventDefault();
     const responseData = await sendRequest(
-      `http://localhost:5000/file/download/${fileId}`,
+      // `http://localhost:5000/file/download/${fileId}`,
+      process.env.REACT_APP_BACKEND_URL + `/file/download/${fileId}`,
       "GET",
       null,
       {
@@ -67,7 +70,8 @@ const AddFile = () => {
   const handleDelete = async (event) => {
     event.preventDefault();
     await sendRequest(
-      `http://localhost:5000/file/delete`,
+      // `http://localhost:5000/file/delete`,
+      process.env.REACT_APP_BACKEND_URL + "/file/delete",
       "DELETE",
       null,
       {
