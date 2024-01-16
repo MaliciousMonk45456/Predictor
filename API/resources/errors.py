@@ -18,6 +18,12 @@ class DatabaseError(HTTPException):
 class MovieNotFoundError(HTTPException):
     pass
 
+class EmailNotSentError(HTTPException):
+    pass
+
+class EmailNotVerifiedError(HTTPException):
+    pass    
+
 errors = {
     "InternalServerError": {
         "message": "Something went wrong",
@@ -32,7 +38,7 @@ errors = {
          "status": 400
      },
      "UnauthorizedError": {
-         "message": "Invalid username or password",
+         "message": "Invalid credentials",
          "status": 401
      },
     "DatabaseError": {
@@ -41,6 +47,14 @@ errors = {
     },
     "MovieNotFoundError": {
         "message": "Movie not found",
+        "status": 400
+    },
+    "EmailNotSentError": {
+        "message": "Email not sent",
+        "status": 400
+    },
+    "EmailNotVerifiedError": {
+        "message": "Invalid email",
         "status": 400
     }
 }

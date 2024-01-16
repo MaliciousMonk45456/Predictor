@@ -9,15 +9,18 @@ from dotenv import load_dotenv
 load_dotenv()
 import re
 from functools import wraps
-from resources.errors import SchemaValidationError, UserAlreadyExistsError,InternalServerError,UnauthorizedError,DatabaseError
-
-
+from resources.errors import SchemaValidationError, UserAlreadyExistsError,InternalServerError,UnauthorizedError,DatabaseError,EmailNotSentError,EmailNotVerifiedError
+import random
+from flask_mail import Message
+from main import mail
 
 DATABASE=os.getenv("DATABASE")
 USER=os.getenv("USER")
 PASSWORD=os.getenv("PASSWORD")
 HOST=os.getenv("HOST")
 PORT=os.getenv("PORT")
+EMAIL=os.getenv("EMAIL")
+# EMAIL_PASSWORD=os.getenv("EMAIL_PASSWORD")
 
 def validator(f):
     @wraps(f)
@@ -65,6 +68,8 @@ class LoginApi(Resource):
             cur.execute("SELECT * FROM users WHERE email=(%s);", (body['username'],))
             data = cur.fetchall() 
             # print(data)
+            if len(data)==0:
+                raise UnauthorizedError
             cur.close() 
             conn.close()
             authorized = check_password_hash(data[0][1], body['password'])
@@ -99,6 +104,95 @@ class DeleteApi(Resource):
             conn.close()
             message={"message":"User deleted successfully"}
             return message,200
+        except psycopg2.errors.IntegrityError:
+            raise SchemaValidationError
+        except psycopg2.errors.ProgrammingError or psycopg2.errors.InternalError or psycopg2.errors.DataError or psycopg2.errors.NotSupportedError or psycopg2.errors.DatabaseError or psycopg2.errors.InterfaceError or psycopg2.errors.OperationalError:
+            raise DatabaseError
+        except:
+            raise InternalServerError
+        
+class SendotpApi(Resource):
+    def post(self):
+        try:
+            body = request.get_json()
+            otp=random.randint(10000,99999)
+            
+            conn = psycopg2.connect(database=DATABASE, user=USER,password=PASSWORD, host=HOST, port=PORT) 
+            cur = conn.cursor() 
+            cur.execute("SELECT * FROM users WHERE email=(%s)",(body['email'],))
+            data=cur.fetchall()
+            cur.execute("DELETE from otp where EXTRACT(EPOCH FROM (CURRENT_TIMESTAMP-created_at))>900")
+            conn.commit()
+            cur.close() 
+            conn.close()
+            # print(data)
+            if len(data)==0:
+                raise EmailNotVerifiedError
+            conn = psycopg2.connect(database=DATABASE, user=USER,password=PASSWORD, host=HOST, port=PORT) 
+            # print("Control is here")
+            cur = conn.cursor() 
+            cur.execute("INSERT INTO otp (email, otp) VALUES (%s,%s) ON CONFLICT(email) DO NOTHING",(body['email'],otp))
+            cur.execute("UPDATE otp SET otp=(%s) WHERE email=(%s)",(otp,body['email']))
+            conn.commit() 
+            cur.close() 
+            conn.close()
+            try:
+                msg = Message(subject="OTP Verification", sender=EMAIL, recipients=[body['email']])
+                msg.body = "Your OTP is : "+str(otp) 
+                mail.send(msg)
+            except:
+                conn = psycopg2.connect(database=DATABASE, user=USER,password=PASSWORD, host=HOST, port=PORT) 
+                cur = conn.cursor() 
+                cur.execute("DELETE from otp where otp=(%s)",(otp,))
+                conn.commit()
+                cur.close() 
+                conn.close()
+                raise EmailNotSentError
+            token={"message":"OTP sent successfully"}
+            return token,200
+        except EmailNotSentError:
+            raise EmailNotSentError
+        except EmailNotVerifiedError:
+            raise EmailNotVerifiedError
+        except psycopg2.errors.UniqueViolation:
+            raise UserAlreadyExistsError
+        except psycopg2.errors.IntegrityError:
+            raise SchemaValidationError
+        # except psycopg2.errors.ProgrammingError or psycopg2.errors.InternalError or psycopg2.errors.DataError or psycopg2.errors.NotSupportedError or psycopg2.errors.DatabaseError or psycopg2.errors.InterfaceError or psycopg2.errors.OperationalError:
+        #     raise DatabaseError
+        # except:
+        #     raise InternalServerError
+        
+class VerifyotpApi(Resource):
+    def post(self):
+        try:
+            body = request.get_json()
+            conn = psycopg2.connect(database=DATABASE, user=USER,password=PASSWORD, host=HOST, port=PORT) 
+            cur = conn.cursor() 
+            cur.execute("select otp from otp where EXTRACT(EPOCH FROM (CURRENT_TIMESTAMP-created_at))<900 and email=(%s)",(body['email'],))
+            data=cur.fetchall()
+            cur.close() 
+            conn.close()
+            # print(data[0][0])
+            if len(data)==0:
+                raise UnauthorizedError
+            if data[0][0]==body['otp']:
+                conn = psycopg2.connect(database=DATABASE, user=USER,password=PASSWORD, host=HOST, port=PORT) 
+                cur = conn.cursor() 
+                cur.execute("DELETE FROM otp WHERE email=(%s)",(body['email'],))
+                password=generate_password_hash(body['password']).decode('utf8')
+                cur.execute("UPDATE users SET password=(%s) WHERE email=(%s)",(password,body['email']))
+                conn.commit() 
+                cur.close() 
+                conn.close()
+                token={"message":"Password changed successfully!"}
+                return token,200
+            else:
+                raise UnauthorizedError
+        except UnauthorizedError:
+            raise UnauthorizedError
+        except psycopg2.errors.UniqueViolation:
+            raise UserAlreadyExistsError
         except psycopg2.errors.IntegrityError:
             raise SchemaValidationError
         except psycopg2.errors.ProgrammingError or psycopg2.errors.InternalError or psycopg2.errors.DataError or psycopg2.errors.NotSupportedError or psycopg2.errors.DatabaseError or psycopg2.errors.InterfaceError or psycopg2.errors.OperationalError:
