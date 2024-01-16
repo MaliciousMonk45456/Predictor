@@ -74,6 +74,8 @@ class new_userAPI(Resource):
             results_final=results.head(int(limit))
             ans=response(results_final)
             return ans,200 
+        except SchemaValidationError:
+            raise SchemaValidationError
         except:
             raise InternalServerError
 
