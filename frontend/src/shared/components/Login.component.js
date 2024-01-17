@@ -28,6 +28,7 @@ const Loginform = (props) => {
         }),
         {
           "Content-Type": "application/json",
+          "Access-Control-Allow-Origin": "*",
         }
       );
       //   console.log(responseData);
