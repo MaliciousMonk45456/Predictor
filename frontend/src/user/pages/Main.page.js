@@ -54,7 +54,8 @@ const Main = () => {
           // console.log(response);
           // console.log(token)
           await sendRequest(
-            "http://localhost:5000/payment/verify",
+            // "http://localhost:5000/payment/verify",
+            process.env.REACT_APP_BACKEND_URI + "payment/verify",
             "POST",
             JSON.stringify({
               razorpay_orderID: response.razorpay_order_id,
@@ -93,7 +94,8 @@ const Main = () => {
     try {
       // console.log(token)
       const data = await sendRequest(
-        "http://localhost:5000/payment/create",
+        // "http://localhost:5000/payment/create",
+        process.env.REACT_APP_BACKEND_URI + "payment/create",
         "POST",
         JSON.stringify({
           amount: 10,
