@@ -6,7 +6,6 @@ const jwt = require("jsonwebtoken");
 const dotenv = require("dotenv");
 const verifyToken = require("../util/verifyToken");
 // const { jwtDecode } = require("jwt-decode");
-const mongoose = require("mongoose");
 dotenv.config();
 
 JWT_KEY = process.env.KEY;
@@ -15,30 +14,30 @@ URI = process.env.URI;
 
 const login = async (req, res, next) => {
   try {
-    await mongoose.connect(URI);
-    const { email, password } = req.body;
-    // console.log(email,password)
-    const user = await Authuser.findOne({ email });
-    if (user.password == null) {
-      throw new ErrorHandler(400, "Login with google");
-    }
-    let isValidPassword = await bcrypt.compare(password, user.password);
-    if (!user || !isValidPassword) {
-      throw new ErrorHandler(400, "Invalid credentials");
-    }
-    let token;
-    token = jwt.sign({ userId: user._id, email: user.email }, JWT_KEY, {
-      expiresIn: "1h",
-    });
-    // res.status(200).cookie("token", token, {
-    //   httpOnly: true,
-    //   maxAge: 3600000,
-    //   secure: true,
+    // const { email, password } = req.body;
+    // // console.log(email,password)
+    // const user = await Authuser.findOne({ email });
+    // if (user.password == null) {
+    //   throw new ErrorHandler(400, "Login with google");
+    // }
+    // let isValidPassword = await bcrypt.compare(password, user.password);
+    // if (!user || !isValidPassword) {
+    //   throw new ErrorHandler(400, "Invalid credentials");
+    // }
+    // let token;
+    // token = jwt.sign({ userId: user._id, email: user.email }, JWT_KEY, {
+    //   expiresIn: "1h",
     // });
-    res
-      .status(200)
-      .json({ Authuser: user._id, token: token, payment: user.payment });
-    // res.status(200).json({ Authuser: user._id});
+    // // res.status(200).cookie("token", token, {
+    // //   httpOnly: true,
+    // //   maxAge: 3600000,
+    // //   secure: true,
+    // // });
+    // res
+    //   .status(200)
+    //   .json({ Authuser: user._id, token: token, payment: user.payment });
+    // // res.status(200).json({ Authuser: user._id});
+    res.status(200).json({email: "email", password: "password"})
   } catch (error) {
     next(error);
   }
