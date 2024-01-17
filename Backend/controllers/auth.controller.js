@@ -5,6 +5,7 @@ const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const dotenv = require("dotenv");
 const verifyToken = require("../util/verifyToken");
+const mongoose = require("mongoose");
 // const { jwtDecode } = require("jwt-decode");
 dotenv.config();
 
@@ -15,11 +16,12 @@ URI = process.env.URI;
 const login = async (req, res, next) => {
   try {
     const { email, password } = req.body;
+    await mongoose.connect(URI);
     // console.log(email,password)
-    const user = await Authuser.findOne({ email });
-    if (user.password == null) {
-      throw new ErrorHandler(400, "Login with google");
-    }
+    // const user = await Authuser.findOne({ email });
+    // if (user.password == null) {
+    //   throw new ErrorHandler(400, "Login with google");
+    // }
     // let isValidPassword = await bcrypt.compare(password, user.password);
     // if (!user || !isValidPassword) {
     //   throw new ErrorHandler(400, "Invalid credentials");
@@ -37,7 +39,7 @@ const login = async (req, res, next) => {
     //   .status(200)
     //   .json({ Authuser: user._id, token: token, payment: user.payment });
     // // res.status(200).json({ Authuser: user._id});
-    res.status(200).json({email: "email", password: "password"})
+    res.status(200).json({message:"connection successful"})
   } catch (error) {
     next(error);
   }
