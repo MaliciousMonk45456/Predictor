@@ -89,7 +89,7 @@ const AddFile = () => {
         <div>
           <form onSubmit={onsubmithandler}>
             <input type="file" name="file" accept=".pdf" />
-            {fileId === "" ? (
+            {fileId === null ? (
               <button type="submit">Submit</button>
             ) : (
               <button type="submit">Update</button>
