@@ -73,30 +73,30 @@ const verifyorder = async (req, res, next) => {
       // console.log("control" + payment);
       const date = new Date(payment.created_at * 1000);
       // console.log(payment);
-      const doc = new PDFDocument();
-      doc.pipe(
-        fs.createWriteStream(
-          `./uploads/receipts/receipt_${razorpay_paymentID}.pdf`
-        )
-      );
-      doc
-        .fontSize(27)
-        .text(
-          `Payment receipt from Recommendation System for transaction id ${razorpay_paymentID} for amount ${
-            payment.amount / 100
-          } for the ${payment.description} issued on ${date}`
-        );
-      doc.end();
+      // const doc = new PDFDocument();
+      // doc.pipe(
+      //   fs.createWriteStream(
+      //     `./uploads/receipts/receipt_${razorpay_paymentID}.pdf`
+      //   )
+      // );
+      // doc
+      //   .fontSize(27)
+      //   .text(
+      //     `Payment receipt from Recommendation System for transaction id ${razorpay_paymentID} for amount ${
+      //       payment.amount / 100
+      //     } for the ${payment.description} issued on ${date}`
+      //   );
+      // doc.end();
       const mailOptions = {
         from: process.env.EMAIL,
         to: payment.email,
         subject: "Payment Receipt",
-        attachments: [
-          {
-            filename: `receipt_${razorpay_paymentID}.pdf`,
-            path: `./uploads/receipts/receipt_${razorpay_paymentID}.pdf`,
-          },
-        ],
+        // attachments: [
+        //   {
+        //     filename: `receipt_${razorpay_paymentID}.pdf`,
+        //     path: `./uploads/receipts/receipt_${razorpay_paymentID}.pdf`,
+        //   },
+        // ],
         text: "Please find attached, the payment receipt",
       };
       transporter.sendMail(mailOptions);

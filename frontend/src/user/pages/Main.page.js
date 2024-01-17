@@ -53,7 +53,7 @@ const Main = () => {
         try {
           // console.log(response);
           // console.log(token)
-          await sendRequest(
+          const resp=await sendRequest(
             // "http://localhost:5000/payment/verify",
             process.env.REACT_APP_BACKEND_URI + "payment/verify",
             "POST",
@@ -68,7 +68,9 @@ const Main = () => {
             }
           );
           // setpayment(true);
-          setterpayment(response.razorpay_payment_id);
+          if(resp.ok){
+            setterpayment(response.razorpay_payment_id);
+          }
           // console.log(data);
         } catch (error) {
           console.log(error);
