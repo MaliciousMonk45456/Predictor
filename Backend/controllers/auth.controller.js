@@ -14,12 +14,12 @@ URI = process.env.URI;
 
 const login = async (req, res, next) => {
   try {
-    // const { email, password } = req.body;
-    // // console.log(email,password)
-    // const user = await Authuser.findOne({ email });
-    // if (user.password == null) {
-    //   throw new ErrorHandler(400, "Login with google");
-    // }
+    const { email, password } = req.body;
+    // console.log(email,password)
+    const user = await Authuser.findOne({ email });
+    if (user.password == null) {
+      throw new ErrorHandler(400, "Login with google");
+    }
     // let isValidPassword = await bcrypt.compare(password, user.password);
     // if (!user || !isValidPassword) {
     //   throw new ErrorHandler(400, "Invalid credentials");
