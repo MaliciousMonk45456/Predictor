@@ -19,7 +19,7 @@ const Loginform = (props) => {
     try {
       const responseData = await sendRequest(
         // "http://localhost:5000/login",
-        "https://predictor-backend.vercel.app/login",
+        "https://cors-anywhere.herokuapp.com/https://predictor-backend.vercel.app/login",
         // process.env.REACT_APP_BACKEND_URI + "/login",
         "POST",
         JSON.stringify({
