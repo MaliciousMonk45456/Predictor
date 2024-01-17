@@ -25,7 +25,7 @@ require("dotenv").config();
 
 function App() {
   const { token, login, logout, userId, setterpayment, payment } = useAuth();
-  // console.log(process.env.REACT_APP_BACKEND_URI)
+  console.log(process.env.REACT_APP_GOOGLE_CLIENT_ID)
   let routes;
   if (token && payment) {
     routes = (
