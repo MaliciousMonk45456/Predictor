@@ -10,8 +10,11 @@ dotenv.config();
 
 JWT_KEY = process.env.KEY;
 
+URI = process.env.URI;
+
 const login = async (req, res, next) => {
   try {
+    await mongoose.connect(URI);
     const { email, password } = req.body;
     // console.log(email,password)
     const user = await Authuser.findOne({ email });
