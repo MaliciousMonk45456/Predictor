@@ -18,8 +18,7 @@ const Loginform = (props) => {
     // console.log(formState);
     try {
       const responseData = await sendRequest(
-        // "http://localhost:5000/login",
-        "https://predictor-backend.vercel.app/login",
+        "http://localhost:5000/login",
         // process.env.REACT_APP_BACKEND_URI + "/login",
         "POST",
         JSON.stringify({
