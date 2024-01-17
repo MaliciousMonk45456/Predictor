@@ -15,7 +15,8 @@ const Main = () => {
     const fetchUsers = async () => {
       try {
         const user = await sendRequest(
-          `http://localhost:5000/user/check/${userId}`
+          // `http://localhost:5000/user/check/${userId}`
+          process.env.REACT_APP_BACKEND_URL + `user/check/${userId}`,
         );
         // console.log("control");
         // console.log(user.payment);
