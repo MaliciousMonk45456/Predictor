@@ -16,11 +16,12 @@ const Loginform = (props) => {
   const onsubmithandler = async (event) => {
     event.preventDefault();
     // console.log(formState);
+    console.log(process.env.REACT_APP_BACKEND_URI + "login")
     try {
       const responseData = await sendRequest(
         // "http://localhost:5000/login",
         // "https://predictor-backend.vercel.app/login",
-        process.env.REACT_APP_BACKEND_URI + "/login",
+        process.env.REACT_APP_BACKEND_URI + "login",
         "POST",
         JSON.stringify({
           email: formState.email.value,
