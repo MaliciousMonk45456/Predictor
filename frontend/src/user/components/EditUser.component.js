@@ -39,8 +39,8 @@ const EditForm = (props) => {
     const fetchUsers = async () => {
       try {
         const user = await sendRequest(
-          `http://localhost:5000/user/${userId}`,
-          // process.env.REACT_APP_BACKEND_URI + "/user/" + userId,
+          // `http://localhost:5000/user/${userId}`,
+          process.env.REACT_APP_BACKEND_URI + "user/" + userId,
           "GET",
           null,
           {
@@ -85,8 +85,8 @@ const EditForm = (props) => {
       formData.append("genre", JSON.stringify(genre.genre));
       // console.log(formData);
       const responseData = await sendRequest(
-        `http://localhost:5000/user/edit/${props.id}`,
-        // process.env.REACT_APP_BACKEND_URI + "/user/edit/" + props.id,
+        // `http://localhost:5000/user/edit/${props.id}`,
+        process.env.REACT_APP_BACKEND_URI + "user/edit/" + props.id,
         "PUT",
         formData,
         {

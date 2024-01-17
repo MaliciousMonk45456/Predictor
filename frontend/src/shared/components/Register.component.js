@@ -21,9 +21,9 @@ const RegisterForm = (props) => {
     // console.log(formState);
     try {
       const responseData = await sendRequest(
-        "http://localhost:5000/register",
+        // "http://localhost:5000/register",
         // "https://predictor-backend.vercel.app/register",
-        // process.env.REACT_APP_BACKEND_URI + "/register",
+        process.env.REACT_APP_BACKEND_URI + "register",
         "POST",
         JSON.stringify({
           email: formState.email.value,

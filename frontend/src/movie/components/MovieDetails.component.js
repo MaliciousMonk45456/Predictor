@@ -7,7 +7,8 @@ const MovieDetails = (props) => {
   const handleClick = async (event) => {
     try {
       const movies = await sendRequest(
-        `http://localhost:5000/movie/${props.movie._id}`,
+        // `http://localhost:5000/movie/${props.movie._id}`,
+        process.env.REACT_APP_BACKEND_URI + `movie/${props.movie._id}`,
         "DELETE"
       );
       //   console.log(movies.movies);
@@ -39,7 +40,7 @@ const MovieDetails = (props) => {
         <div>
           {!!props.movie.image && (
             <img
-              src={"http://localhost:5000/" + props.movie.image}
+              src={process.env.REACT_APP_BACKEND_URI + props.movie.image}
               alt="preview"
             />
           )}

@@ -13,8 +13,8 @@ const PredictedMovie = () => {
     const fetchPredictions = async () => {
       try {
         const responseData = await sendRequest(
-          `http://localhost:5000/movie/suggest/${id}`
-          // process.env.REACT_APP_BACKEND_URI + "/movie/suggest/" + id
+          // `http://localhost:5000/movie/suggest/${id}`
+          process.env.REACT_APP_BACKEND_URI + "movie/suggest/" + id
         );
         // console.log("control");
         // console.log(user);
@@ -26,8 +26,8 @@ const PredictedMovie = () => {
     const fetchPredictionsdataset = async () => {
         try {
           const responseData = await sendRequest(
-            `http://localhost:5000/movie/suggest/existing/${id}`
-            // process.env.REACT_APP_BACKEND_URI + "/movie/suggest/existing/" + id
+            // `http://localhost:5000/movie/suggest/existing/${id}`
+            process.env.REACT_APP_BACKEND_URI + "movie/suggest/existing/" + id
           );
           // console.log("control");
           // console.log(user);
