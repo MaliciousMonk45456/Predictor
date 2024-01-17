@@ -47,7 +47,7 @@ app.use("/uploads/receipts", express.static(path.join("uploads", "receipts")));
 
 app.use("/payment", paymentRouter);
 
-app.use("/", authRouter);
+// app.use("/", authRouter);
 app.use("/forgot", otpRouter);
 app.use("/user", usergenreRouter);
 app.use("/movie", movieRouter);
