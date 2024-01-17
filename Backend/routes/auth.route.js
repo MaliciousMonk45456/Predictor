@@ -4,6 +4,10 @@ const { login, signup, useGoogle } = require("../controllers/auth.controller");
 
 const router = express.Router();
 
+router.post("/",async (req,res)=>{
+  res.send("hello")
+})
+
 router.post("/login", login);
 
 router.post("/googlelogin", useGoogle);
