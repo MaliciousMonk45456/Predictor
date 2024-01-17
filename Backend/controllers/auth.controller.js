@@ -18,11 +18,10 @@ const login = async (req, res, next) => {
     // if (user.password == null) {
     //   throw new ErrorHandler(400, "Login with google");
     // }
-    user={password:"123456"}
-    let isValidPassword = await bcrypt.compare(password, user.password);
-    if (!user || !isValidPassword) {
-      throw new ErrorHandler(400, "Invalid credentials");
-    }
+    // let isValidPassword = await bcrypt.compare(password, user.password);
+    // if (!user || !isValidPassword) {
+    //   throw new ErrorHandler(400, "Invalid credentials");
+    // }
     let token;
     token = jwt.sign({ userId: user._id, email: user.email }, JWT_KEY, {
       expiresIn: "1h",
