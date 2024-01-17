@@ -18,7 +18,7 @@ const login = async (req, res, next) => {
     const { email, password } = req.body;
     await mongoose.connect(URI);
     // console.log(email,password)
-    // const user = await Authuser.findOne({ email });
+    const user = await Authuser.findOne({ email });
     // if (user.password == null) {
     //   throw new ErrorHandler(400, "Login with google");
     // }
