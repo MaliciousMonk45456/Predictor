@@ -35,7 +35,7 @@ app.use(
 app.use(bodyParser.json());
 
 // app.use(cookieParser())
-app.get("/test", (req, res) => {
+app.get("/", (req, res) => {
   res.send("hello");
 });
 
