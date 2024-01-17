@@ -35,6 +35,9 @@ app.use(
 app.use(bodyParser.json());
 
 // app.use(cookieParser())
+app.get("/test", (req, res) => {
+  res.send("hello");
+});
 
 app.use("/file", fileRouter);
 
