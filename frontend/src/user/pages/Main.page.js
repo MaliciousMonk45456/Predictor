@@ -115,7 +115,8 @@ const Main = () => {
   const handleRefund = async () => {
     try {
       const data = await sendRequest(
-        "http://localhost:5000/payment/refund",
+        // "http://localhost:5000/payment/refund",
+        process.env.REACT_APP_BACKEND_URI + "payment/refund",
         "POST",
         JSON.stringify({
           paymentId: payment,
@@ -136,7 +137,8 @@ const Main = () => {
   const handleReceipt = async () => {
     try {
       const responseData = await sendRequest(
-        `http://localhost:5000/uploads/receipts/receipt_${payment}.pdf`,
+        // `http://localhost:5000/uploads/receipts/receipt_${payment}.pdf`,
+        process.env.REACT_APP_BACKEND_URI + `uploads/receipts/receipt_${payment}.pdf`,
         "GET",
         null,
         {
