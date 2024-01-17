@@ -6,6 +6,7 @@ const jwt = require("jsonwebtoken");
 const dotenv = require("dotenv");
 const verifyToken = require("../util/verifyToken");
 // const { jwtDecode } = require("jwt-decode");
+const mongoose = require("mongoose");
 dotenv.config();
 
 JWT_KEY = process.env.KEY;
