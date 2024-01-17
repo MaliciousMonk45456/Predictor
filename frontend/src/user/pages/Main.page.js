@@ -68,7 +68,7 @@ const Main = () => {
             }
           );
           // setpayment(true);
-          if(resp.ok){
+          if(resp.message==="Payment verified successfully"){
             setterpayment(response.razorpay_payment_id);
           }
           // console.log(data);
