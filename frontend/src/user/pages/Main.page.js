@@ -107,7 +107,7 @@ const Main = () => {
           "Content-Type": "application/json",
         }
       );
-      console.log(data);
+      // console.log(data);
       initPay(data.data);
     } catch (error) {
       console.log(error);
@@ -129,7 +129,7 @@ const Main = () => {
           "Content-Type": "application/json",
         }
       );
-      console.log(data);
+      // console.log(data);
       setterpayment(false);
     } catch (error) {
       console.log(error);

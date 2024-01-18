@@ -29,7 +29,7 @@ export const useHttp = () => {
 
         if (!file ) {
           responseData = await response.json();
-          // console.log(responseData)
+          console.log(responseData)
         }
         else {
           responseData = await response.blob();

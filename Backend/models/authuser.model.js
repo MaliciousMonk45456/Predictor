@@ -40,6 +40,10 @@ const authuserSchema = new mongoose.Schema({
     type: String,
     default: null,
   },
+  paymentReciept: {
+    type:mongoose.Schema.Types.ObjectId,
+    ref: "File",
+  },
 });
 
 authuserSchema.pre('save', async function (next) {
