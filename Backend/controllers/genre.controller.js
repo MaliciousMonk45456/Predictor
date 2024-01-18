@@ -239,4 +239,5 @@ module.exports = {
   usergenre_edit,
   usergenre_delete,
   checkuser,
+  user_img,
 };

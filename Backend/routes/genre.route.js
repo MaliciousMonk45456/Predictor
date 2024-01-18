@@ -7,6 +7,7 @@ const {
   predict_movie,
   usergenre_delete,
   checkuser,
+  user_img
 } = require("../controllers/genre.controller");
 const fileUpload = require("../middleware/file.upload.middleware");
 const converter = require("../middleware/converter.middleware");
@@ -24,6 +25,8 @@ customValidator = (value, fieldName) => {
 };
 
 router.get("/check/:id",checkuser)
+
+router.get("/image/:id", user_img);
 
 router.use(checkAuth)
 
