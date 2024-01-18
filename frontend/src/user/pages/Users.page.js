@@ -40,7 +40,7 @@ const Users = () => {
       try {
         const image = await sendRequest(
           // `http://localhost:5000/user/image/${id}`,
-          process.env.REACT_APP_BACKEND_URI + `user/image/${userId}`,
+          process.env.REACT_APP_BACKEND_URI + `user/image/${id}`,
           "GET",
           null,
           {},
@@ -57,7 +57,7 @@ const Users = () => {
       fetchUsers();
       fetchImg();
     }
-  }, [sendRequest, userId, token]);
+  }, [sendRequest, userId, token,id]);
 
   const handleClick = async (event) => {
     event.preventDefault();
