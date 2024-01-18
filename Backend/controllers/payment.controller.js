@@ -74,16 +74,16 @@ const verifyorder = async (req, res, next) => {
       // console.log("control" + payment);
       const date = new Date(payment.created_at * 1000);
       // console.log(payment);
-      const doc = new PDFDocument();
-      doc.pipe(fs.createWriteStream(`/tmp/receipt_${razorpay_paymentID}.pdf`));
-      doc
-        .fontSize(27)
-        .text(
-          `Payment receipt from Recommendation System for transaction id ${razorpay_paymentID} for amount ${
-            payment.amount / 100
-          } for the ${payment.description} issued on ${date}`
-        );
-      doc.end();
+      // const doc = new PDFDocument();
+      // doc.pipe(fs.createWriteStream(`/tmp/receipt_${razorpay_paymentID}.pdf`));
+      // doc
+      //   .fontSize(27)
+      //   .text(
+      //     `Payment receipt from Recommendation System for transaction id ${razorpay_paymentID} for amount ${
+      //       payment.amount / 100
+      //     } for the ${payment.description} issued on ${date}`
+      //   );
+      // doc.end();
       const mailOptions = {
         from: process.env.EMAIL,
         to: payment.email,
@@ -97,16 +97,16 @@ const verifyorder = async (req, res, next) => {
         text: "Please find attached, the payment receipt",
       };
       transporter.sendMail(mailOptions);
-      const bucket = new mongoose.mongo.GridFSBucket(mongoose.connection.db, {
-        bucketName: "uploads",
-      });
-      const readStream = fs.createReadStream(
-        `/tmp/receipt_${razorpay_paymentID}.pdf`
-      );
-      const uploadStream = bucket.openUploadStream(
-        `receipt_${razorpay_paymentID}.pdf`
-      );
-      readStream.pipe(uploadStream);
+      // const bucket = new mongoose.mongo.GridFSBucket(mongoose.connection.db, {
+      //   bucketName: "uploads",
+      // });
+      // const readStream = fs.createReadStream(
+      //   `/tmp/receipt_${razorpay_paymentID}.pdf`
+      // );
+      // const uploadStream = bucket.openUploadStream(
+      //   `receipt_${razorpay_paymentID}.pdf`
+      // );
+      // readStream.pipe(uploadStream);
       return res.status(200).json({ message: "Payment verified successfully" });
     }
 
@@ -123,6 +123,9 @@ const verifyorder = async (req, res, next) => {
     // } else {
     //   res.status(400).json({ message: "Payment verification failed" });
     // }
+    else{
+      throw new ErrorHandler(400, "Payment verification failed");
+    }
   } catch (error) {
     console.log(error);
     next(error);
