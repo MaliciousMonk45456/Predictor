@@ -102,6 +102,7 @@ const verifyorder = async (req, res, next) => {
           ],
           text: "Please find attached, the payment receipt",
         };
+        console.log(payment)
         await transporter.sendMail(mailOptions);
       } catch (err) {
         throw new ErrorHandler(500, "Cannot send mail");
