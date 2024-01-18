@@ -36,7 +36,7 @@ const usergenre_post = async (req, res, next) => {
     } = req.body.genre;
 
     const user = new User({
-      image: req.file.path,
+      image: req.file.id,
       genre: {
         action,
         adventure,
@@ -104,7 +104,7 @@ const usergenre_edit = async (req, res, next) => {
     }
     user.genre = req.body.genre;
     if (req.file) {
-      user.image = req.file.path;
+      user.image = req.file.id;
     }
     await user.save();
     res.status(200).json({
@@ -115,6 +115,22 @@ const usergenre_edit = async (req, res, next) => {
     next(error);
   }
 };
+
+const user_img=async(req,res,next)=>{
+  try {
+    const user = await User.findById(req.params.id);
+    if (!user || user.length == 0 || user == -1) {
+      throw new ErrorHandler(400, "User does not exist");
+    }
+    const bucket = new mongoose.mongo.GridFSBucket(mongoose.connection.db, {
+      bucketName: "uploads",
+    });
+    const _id = user.image;
+    bucket.openDownloadStream(_id).pipe(res);
+  } catch (error) {
+    next(error);
+  }
+}
 
 const usergenre_get = async (req, res, next) => {
   try {
@@ -199,13 +215,17 @@ const usergenre_delete = async (req, res, next) => {
     await session.commitTransaction();
     session.endSession();
 
+    // fs.unlink(user.image, (err) => {
+    //   if (err) {
+    //     throw new ErrorHandler(400, "Image not found");
+    //   }
+    // });
+    const bucket = new mongoose.mongo.GridFSBucket(mongoose.connection.db, {
+      bucketName: "uploads",
+    });
+    bucket.delete(user.image);
     res.status(200).json({
       message: `Deleted user genre data for ${req.params.id}`,
-    });
-    fs.unlink(user.image, (err) => {
-      if (err) {
-        throw new ErrorHandler(400, "Image not found");
-      }
     });
   } catch (error) {
     next(error);

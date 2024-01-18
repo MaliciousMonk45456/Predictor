@@ -10,7 +10,8 @@ const {
   movie_delete,
   movie_post_existing,
   movie_suggestion_existing,
-  movie_get_specific
+  movie_get_specific,
+  movie_img
 } = require("../controllers/movie.controller");
 
 const router = express.Router();
@@ -47,6 +48,8 @@ router.post(
   ],
   movie_post_existing
 );
+
+router.get("/image/:id", movie_img);
 
 router.post(
   "/new",

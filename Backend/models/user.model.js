@@ -14,8 +14,8 @@ const userSchema = new mongoose.Schema({
   //     unique: true
   // },
   image: {
-    type: String,
-    required: [true,"Please enter image url"],
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "uploads.files",
   },
   genre: {
     action: {

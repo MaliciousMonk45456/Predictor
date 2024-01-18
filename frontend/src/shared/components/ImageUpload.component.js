@@ -2,7 +2,7 @@ import React, { useState, useRef, useEffect } from "react";
 
 const ImageUpload = (props) => {
   const [file, setFile] = useState();
-  const initialpreviewURL=props.initialvalue?process.env.REACT_APP_BACKEND_URI+props.initialvalue:null
+  const initialpreviewURL=props.initialvalue?props.initialvalue:null
   const [previewUrl, setPreviewUrl] = useState(initialpreviewURL);
   const [isValid, setIsValid] = useState(false||props.initialvalid);
   const [isTouched, setIsTouched] = useState(false);
@@ -30,6 +30,9 @@ const ImageUpload = (props) => {
       pickedFile = event.target.files[0];
       setFile(pickedFile);
       setIsValid(true);
+      if(props.setter){
+        props.setter(pickedFile)
+      }
       fileIsValid = true;
     } else {
       setIsValid(false);

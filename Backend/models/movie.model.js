@@ -6,8 +6,8 @@ const movieSchema = new mongoose.Schema({
       default: -1,
   },
   image: {
-    type: String,
-    // required: [true,"Please enter image url"],
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "uploads.files",
   },
   year: {
     type: Number,

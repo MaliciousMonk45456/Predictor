@@ -1,4 +1,4 @@
-import React from "react";
+import React,{useState} from "react";
 import { useNavigate } from "react-router-dom";
 import InputMovie from "./InputMovie.component";
 import { useHttp } from "../../shared/hooks/useHttp";
@@ -8,6 +8,7 @@ import ImageUpload from "../../shared/components/ImageUpload.component";
 
 const AddForm = (props) => {
   const navigate = useNavigate();
+  const [pickedFile, setPickedFile] = useState();
   const [formState, onchangehandler] = useForm({
     year: { value: "", valid: false },
     average_rating: { value: "", valid: false },
@@ -40,7 +41,8 @@ const AddForm = (props) => {
     // console.log(formState);
     try {
       const formData = new FormData();
-      formData.append("image", formState.image.value);
+      console.log(pickedFile);
+      formData.append("image", pickedFile);
       const genre = {
         genre: {
           action: formState.genre[0].value,
@@ -110,6 +112,7 @@ const AddForm = (props) => {
             <ImageUpload
               id="image"
               onInput={onchangehandler}
+              setter={setPickedFile}
               errorText="Please select a valid image"
             />
             <button disabled={!formState.formIsValid} type="submit">

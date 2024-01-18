@@ -1,9 +1,30 @@
-import React from "react";
+import React,{useEffect,useState} from "react";
 import Button from "../../shared/components/Button.component";
 import { useHttp } from "../../shared/hooks/useHttp";
 
 const MovieDetails = (props) => {
   const { isloading,error,sendRequest } = useHttp();
+  const [img, setimg] = useState();
+  useEffect(() => {
+    const fetchImg = async () => {
+      try {
+        const image = await sendRequest(
+          // `http://localhost:5000/movie/image/${props.movie._id}`,
+          process.env.REACT_APP_BACKEND_URI + `movie/image/${props.movie._id}`,
+          "GET",
+          null,
+          {},
+          true
+        );
+        // console.log(image);
+        const imageObjectURL = URL.createObjectURL(image);
+        setimg(imageObjectURL);
+      } catch (err) {
+        console.log(err);
+      }
+    };
+    fetchImg();
+  }, [sendRequest,props.movie._id]);
   const handleClick = async (event) => {
     try {
       const movies = await sendRequest(
@@ -40,7 +61,7 @@ const MovieDetails = (props) => {
         <div>
           {!!props.movie.image && (
             <img
-              src={process.env.REACT_APP_BACKEND_URI + props.movie.image}
+              src={img}
               alt="preview"
             />
           )}

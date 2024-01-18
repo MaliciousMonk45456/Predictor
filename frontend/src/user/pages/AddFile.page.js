@@ -64,7 +64,7 @@ const AddFile = () => {
     const file = new Blob([responseData], { type: "application/pdf" });
     const fileURL = URL.createObjectURL(file);
     window.open(fileURL);
-    console.log(responseData);
+    // console.log(responseData);
   };
 
   const handleDelete = async (event) => {

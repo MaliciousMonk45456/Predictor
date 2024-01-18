@@ -7,6 +7,7 @@ import ImageUpload from "../../shared/components/ImageUpload.component";
 
 const EditForm = (props) => {
   const navigate = useNavigate();
+  const [pickedFile, setPickedFile] = useState(null);
   const id = useParams().id;
   const [formState, onchangehandler, setformdata] = useForm({
     year: { value: "", valid: false },
@@ -51,14 +52,33 @@ const EditForm = (props) => {
         console.log(err);
       }
     };
+    const fetchImg = async () => {
+      try {
+        const image = await sendRequest(
+          // `http://localhost:5000/movie/image/${id}`,
+          process.env.REACT_APP_BACKEND_URI + `movie/image/${id}`,
+          "GET",
+          null,
+          {},
+          true
+        );
+        // console.log(image);
+        const imageObjectURL = URL.createObjectURL(image);
+        setPickedFile(imageObjectURL);
+        // console.log(pickedFile)
+      } catch (err) {
+        console.log(err);
+      }
+    };
     fetchMovies();
+    fetchImg();
   }, [sendRequest, id, setformdata]);
   const onsubmithandler = async (event) => {
     event.preventDefault();
     // console.log(formState);
     try {
       const formData = new FormData();
-      formData.append("image", formState.image.value);
+      formData.append("image", pickedFile);
       const genre = {
         genre: {
           action: formState.genre[0].value,
@@ -97,7 +117,7 @@ const EditForm = (props) => {
     <div>
       {isloading && <h1>Loading...</h1>}
       {!isloading && error && <h1>{error}</h1>}
-      {!isloading && !error && !!movies && (
+      {!isloading && !error && !!movies && pickedFile!=null && (
         <form onSubmit={onsubmithandler}>
           <InputMovie
             id="year"
@@ -134,8 +154,9 @@ const EditForm = (props) => {
             id="image"
             errorText="Please select a valid image"
             onInput={onchangehandler}
-            initialvalue={movies.image}
+            initialvalue={pickedFile}
             initialvalid={true}
+            setter={setPickedFile}
           />
           <button disabled={!formState.formIsValid} type="submit">
             Edit Movie
