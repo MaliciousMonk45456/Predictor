@@ -8,6 +8,7 @@ import { AuthContext } from "../../shared/context/auth.context";
 
 const EditForm = (props) => {
   const { userId, token } = useContext(AuthContext);
+  const [pickedFile, setPickedFile] = useState(null);
   const navigate = useNavigate();
   const [formState, onchangehandler, setformdata] = useForm({
     image: {
@@ -55,7 +56,28 @@ const EditForm = (props) => {
         console.log(err);
       }
     };
+    const fetchImg = async () => {
+      try {
+        const image = await sendRequest(
+          // `http://localhost:5000/user/image/${userId}`,
+          process.env.REACT_APP_BACKEND_URI + "user/image/" + userId,
+          "GET",
+          null,
+          {
+            Authorization: "Bearer " + token,
+          },
+          true
+        );
+        // console.log(img.image);
+        const imageObjectURL = URL.createObjectURL(image);
+        setPickedFile(imageObjectURL);
+      }
+      catch (err) {
+        console.log(err);
+      }
+    }
     fetchUsers();
+    fetchImg();
   }, [sendRequest, userId, setformdata, token]);
   const onsubmithandler = async (event) => {
     event.preventDefault();
@@ -63,7 +85,7 @@ const EditForm = (props) => {
     try {
       const formData = new FormData();
       // console.log(formState.image.value);
-      formData.append("image", formState.image.value);
+      formData.append("image", pickedFile);
       const genre = {
         genre: {
           action: formState.genre[0].value,
@@ -105,7 +127,7 @@ const EditForm = (props) => {
     <div>
       {isloading && <h1>Loading...</h1>}
       {!isloading && error && <h1>{error}</h1>}
-      {!isloading && !error && !!user && (
+      {!isloading && !error && !!user && pickedFile!=null && (
         <form onSubmit={onsubmithandler}>
           {formState.genre.map((genre) => (
             <Input
@@ -124,8 +146,9 @@ const EditForm = (props) => {
             id="image"
             errorText="Please select a valid image"
             onInput={onchangehandler}
-            initialvalue={user.image}
+            initialvalue={pickedFile}
             initialvalid={true}
+            setter={setPickedFile}
           />
           <button disabled={!formState.formIsValid} type="submit">
             Edit User

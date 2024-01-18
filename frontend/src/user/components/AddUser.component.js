@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import React, { useContext,useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Input from "./Input.component";
 import { useHttp } from "../../shared/hooks/useHttp";
@@ -8,6 +8,7 @@ import { AuthContext } from "../../shared/context/auth.context";
 
 const AddForm = (props) => {
   const { userId, token } = useContext(AuthContext);
+  const [pickedFile, setPickedFile] = useState();
   const navigate = useNavigate();
   const [formState, onchangehandler] = useForm({
     genre: [
@@ -39,7 +40,7 @@ const AddForm = (props) => {
     // console.log(formState);
     try {
       const formData = new FormData();
-      formData.append("image", formState.image.value);
+      formData.append("image", pickedFile);
       const genre = {
         genre: {
           action: formState.genre[0].value,
@@ -99,6 +100,7 @@ const AddForm = (props) => {
             id="image"
             errorText="Please select a valid image"
             onInput={onchangehandler}
+            setter={setPickedFile}
           />
           <button disabled={!formState.formIsValid} type="submit">
             Add User

@@ -31,13 +31,31 @@ const Users = () => {
         // console.log(user);
         setusers(user);
         // console.log(user.image)
-        setimg(user.image);
+        // setimg(user.image);
       } catch (err) {
         console.log(err);
       }
     };
+    const fetchImg = async () => {
+      try {
+        const image = await sendRequest(
+          // `http://localhost:5000/user/image/${id}`,
+          process.env.REACT_APP_BACKEND_URI + `user/image/${userId}`,
+          "GET",
+          null,
+          {},
+          true
+        );
+        // console.log(image);
+        const imageObjectURL = URL.createObjectURL(image);
+        setimg(imageObjectURL);
+      } catch (err) {
+        console.log(err);
+      }
+    }
     if (!!userId) {
       fetchUsers();
+      fetchImg();
     }
   }, [sendRequest, userId, token]);
 
@@ -65,7 +83,7 @@ const Users = () => {
       {!isloading && error && <h1>{error}</h1>}
       {!isloading && !error && !!img && (
         <div>
-          <img src={process.env.REACT_APP_BACKEND_URI + img} alt="Preview" />
+          <img src={img} alt="Preview" />
           {JSON.stringify(users)}
           <Button link="../../edituser/" text="Edit User Genre" id={id} />
           <button onClick={handleClick}>Delete User Genre</button>
