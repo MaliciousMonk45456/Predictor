@@ -2,6 +2,7 @@ const { ErrorHandler } = require("../util/error");
 const Authuser = require("../models/authuser.model");
 const nodemailer = require("nodemailer");
 const PDFDocument = require("pdfkit");
+const mongoose = require("mongoose");
 const fs = require("fs");
 
 const dotenv = require("dotenv");
@@ -76,7 +77,7 @@ const verifyorder = async (req, res, next) => {
       const doc = new PDFDocument();
       doc.pipe(
         fs.createWriteStream(
-          `./uploads/receipts/receipt_${razorpay_paymentID}.pdf`
+          `/tmp/receipt_${razorpay_paymentID}.pdf`
         )
       );
       doc
@@ -87,6 +88,16 @@ const verifyorder = async (req, res, next) => {
           } for the ${payment.description} issued on ${date}`
         );
       doc.end();
+      const bucket = new mongoose.mongo.GridFSBucket(mongoose.connection.db, {
+        bucketName: "uploads",
+      });
+      const readStream = fs.createReadStream(
+        `/tmp/receipt_${razorpay_paymentID}.pdf`
+      );
+      const uploadStream = bucket.openUploadStream(
+        `receipt_${razorpay_paymentID}.pdf`
+      );
+      readStream.pipe(uploadStream);
       const mailOptions = {
         from: process.env.EMAIL,
         to: payment.email,
@@ -94,7 +105,7 @@ const verifyorder = async (req, res, next) => {
         attachments: [
           {
             filename: `receipt_${razorpay_paymentID}.pdf`,
-            path: `./uploads/receipts/receipt_${razorpay_paymentID}.pdf`,
+            path: `/tmp/receipt_${razorpay_paymentID}.pdf`,
           },
         ],
         text: "Please find attached, the payment receipt",
@@ -138,8 +149,21 @@ const refundorder = async (req, res, next) => {
   }
 };
 
+const getreceipt = async (req, res, next) => {
+  try {
+    const bucket = new mongoose.mongo.GridFSBucket(mongoose.connection.db, {
+      bucketName: "uploads",
+    });
+    const _id = req.params.id;
+    bucket.openDownloadStream(_id).pipe(res);
+  } catch (error) {
+    next(error);
+  }
+};
+
 module.exports = {
   create_order,
   verifyorder,
   refundorder,
+  getreceipt,
 };

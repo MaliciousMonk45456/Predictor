@@ -3,6 +3,7 @@ const {
   create_order,
   verifyorder,
   refundorder,
+  getreceipt,
 } = require("../controllers/payment.controller");
 const { checkAuthpayment } = require("../middleware/checkauth.middleware");
 
