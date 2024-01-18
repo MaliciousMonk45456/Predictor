@@ -75,11 +75,7 @@ const verifyorder = async (req, res, next) => {
       const date = new Date(payment.created_at * 1000);
       // console.log(payment);
       const doc = new PDFDocument();
-      doc.pipe(
-        fs.createWriteStream(
-          `/tmp/receipt_${razorpay_paymentID}.pdf`
-        )
-      );
+      doc.pipe(fs.createWriteStream(`/tmp/receipt_${razorpay_paymentID}.pdf`));
       doc
         .fontSize(27)
         .text(
@@ -88,16 +84,6 @@ const verifyorder = async (req, res, next) => {
           } for the ${payment.description} issued on ${date}`
         );
       doc.end();
-      const bucket = new mongoose.mongo.GridFSBucket(mongoose.connection.db, {
-        bucketName: "uploads",
-      });
-      const readStream = fs.createReadStream(
-        `/tmp/receipt_${razorpay_paymentID}.pdf`
-      );
-      const uploadStream = bucket.openUploadStream(
-        `receipt_${razorpay_paymentID}.pdf`
-      );
-      readStream.pipe(uploadStream);
       const mailOptions = {
         from: process.env.EMAIL,
         to: payment.email,
@@ -111,7 +97,16 @@ const verifyorder = async (req, res, next) => {
         text: "Please find attached, the payment receipt",
       };
       transporter.sendMail(mailOptions);
-
+      const bucket = new mongoose.mongo.GridFSBucket(mongoose.connection.db, {
+        bucketName: "uploads",
+      });
+      const readStream = fs.createReadStream(
+        `/tmp/receipt_${razorpay_paymentID}.pdf`
+      );
+      const uploadStream = bucket.openUploadStream(
+        `receipt_${razorpay_paymentID}.pdf`
+      );
+      readStream.pipe(uploadStream);
       return res.status(200).json({ message: "Payment verified successfully" });
     }
 
