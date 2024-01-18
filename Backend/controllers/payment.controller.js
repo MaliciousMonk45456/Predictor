@@ -88,12 +88,12 @@ const verifyorder = async (req, res, next) => {
         from: process.env.EMAIL,
         to: payment.email,
         subject: "Payment Receipt",
-        attachments: [
-          {
-            filename: `receipt_${razorpay_paymentID}.pdf`,
-            path: `/tmp/receipt_${razorpay_paymentID}.pdf`,
-          },
-        ],
+        // attachments: [
+        //   {
+        //     filename: `receipt_${razorpay_paymentID}.pdf`,
+        //     path: `/tmp/receipt_${razorpay_paymentID}.pdf`,
+        //   },
+        // ],
         text: "Please find attached, the payment receipt",
       };
       transporter.sendMail(mailOptions);
