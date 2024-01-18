@@ -17,6 +17,6 @@ router.post("/verify", verifyorder);
 
 router.post("/refund", refundorder);
 
-router.get("/receipt/:id", getreceipt);
+router.get("/receipt", getreceipt);
 
 module.exports = router;

@@ -141,7 +141,7 @@ const Main = () => {
       const responseData = await sendRequest(
         // `http://localhost:5000/uploads/receipts/receipt_${payment}.pdf`,
         // process.env.REACT_APP_BACKEND_URI + `uploads/receipts/receipt_${payment}.pdf`,
-        process.env.REACT_APP_BACKEND_URI + `payment/receipt/receipt_${payment}.pdf`,
+        process.env.REACT_APP_BACKEND_URI + `payment/receipt`,
         "GET",
         null,
         {

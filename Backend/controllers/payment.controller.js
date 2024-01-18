@@ -60,7 +60,6 @@ const verifyorder = async (req, res, next) => {
     if (razorpay_signature == resultSign) {
       const user = await Authuser.findById(req.userData.userId);
       user.payment = razorpay_paymentID;
-      await user.save();
       // console.log(razorpay_paymentID);
       const payment = await instance.payments.fetch(razorpay_paymentID);
       // console.log("control" + payment);
@@ -118,6 +117,8 @@ const verifyorder = async (req, res, next) => {
           `receipt_${razorpay_paymentID}.pdf`
         );
         readStream.pipe(uploadStream);
+        user.paymentReciept = uploadStream.id;
+        await user.save();
         return res
           .status(200)
           .json({ message: "Payment verified successfully" });
@@ -168,7 +169,8 @@ const getreceipt = async (req, res, next) => {
     const bucket = new mongoose.mongo.GridFSBucket(mongoose.connection.db, {
       bucketName: "uploads",
     });
-    const _id = req.params.id;
+    const user=await Authuser.findById(req.userData.userId);
+    const _id = user.paymentReciept;
     bucket.openDownloadStream(_id).pipe(res);
   } catch (error) {
     next(error);
