@@ -84,11 +84,14 @@ const verifyorder = async (req, res, next) => {
 
       try {
         const transporter = nodemailer.createTransport({
-          service: "gmail",
+          // service: "gmail",
+          port: 465,
+          host: "smtp.gmail.com",
           auth: {
             user: process.env.EMAIL,
             pass: process.env.PASSWORD,
           },
+          secure: true,
         });
         const mailOptions = {
           from: process.env.EMAIL,
@@ -102,7 +105,7 @@ const verifyorder = async (req, res, next) => {
           ],
           text: "Please find attached, the payment receipt",
         };
-        console.log(payment)
+        // console.log(payment)
         await transporter.sendMail(mailOptions);
       } catch (err) {
         throw new ErrorHandler(500, "Cannot send mail");
