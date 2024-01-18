@@ -60,7 +60,7 @@ const EditForm = (props) => {
       try {
         const image = await sendRequest(
           // `http://localhost:5000/user/image/${userId}`,
-          process.env.REACT_APP_BACKEND_URI + "user/image/" + userId,
+          process.env.REACT_APP_BACKEND_URI + "user/image/" + props.id,
           "GET",
           null,
           {
@@ -78,7 +78,7 @@ const EditForm = (props) => {
     }
     fetchUsers();
     fetchImg();
-  }, [sendRequest, userId, setformdata, token]);
+  }, [sendRequest, userId, setformdata, token, props.id]);
   const onsubmithandler = async (event) => {
     event.preventDefault();
     // console.log(formState);
