@@ -57,14 +57,6 @@ const verifyorder = async (req, res, next) => {
       .update(sign.toString())
       .digest("hex");
 
-    const transporter = nodemailer.createTransport({
-      service: "gmail",
-      auth: {
-        user: process.env.EMAIL,
-        pass: process.env.PASSWORD,
-      },
-    });
-
     if (razorpay_signature == resultSign) {
       const user = await Authuser.findById(req.userData.userId);
       user.payment = razorpay_paymentID;
@@ -74,40 +66,64 @@ const verifyorder = async (req, res, next) => {
       // console.log("control" + payment);
       const date = new Date(payment.created_at * 1000);
       // console.log(payment);
-      const doc = new PDFDocument();
-      doc.pipe(fs.createWriteStream(`/tmp/receipt_${razorpay_paymentID}.pdf`));
-      doc
-        .fontSize(27)
-        .text(
-          `Payment receipt from Recommendation System for transaction id ${razorpay_paymentID} for amount ${
-            payment.amount / 100
-          } for the ${payment.description} issued on ${date}`
+      try {
+        const doc = new PDFDocument();
+        doc.pipe(
+          fs.createWriteStream(`/tmp/receipt_${razorpay_paymentID}.pdf`)
         );
-      doc.end();
-      const mailOptions = {
-        from: process.env.EMAIL,
-        to: payment.email,
-        subject: "Payment Receipt",
-        attachments: [
-          {
-            filename: `receipt_${razorpay_paymentID}.pdf`,
-            path: `/tmp/receipt_${razorpay_paymentID}.pdf`,
+        doc
+          .fontSize(27)
+          .text(
+            `Payment receipt from Recommendation System for transaction id ${razorpay_paymentID} for amount ${
+              payment.amount / 100
+            } for the ${payment.description} issued on ${date}`
+          );
+        doc.end();
+      } catch (err) {
+        throw new ErrorHandler(500, "Cannot make Receipt");
+      }
+
+      try {
+        const transporter = nodemailer.createTransport({
+          service: "gmail",
+          auth: {
+            user: process.env.EMAIL,
+            pass: process.env.PASSWORD,
           },
-        ],
-        text: "Please find attached, the payment receipt",
-      };
-      transporter.sendMail(mailOptions);
-      const bucket = new mongoose.mongo.GridFSBucket(mongoose.connection.db, {
-        bucketName: "uploads",
-      });
-      const readStream = fs.createReadStream(
-        `/tmp/receipt_${razorpay_paymentID}.pdf`
-      );
-      const uploadStream = bucket.openUploadStream(
-        `receipt_${razorpay_paymentID}.pdf`
-      );
-      readStream.pipe(uploadStream);
-      return res.status(200).json({ message: "Payment verified successfully" });
+        });
+        const mailOptions = {
+          from: process.env.EMAIL,
+          to: payment.email,
+          subject: "Payment Receipt",
+          attachments: [
+            {
+              filename: `receipt_${razorpay_paymentID}.pdf`,
+              path: `/tmp/receipt_${razorpay_paymentID}.pdf`,
+            },
+          ],
+          text: "Please find attached, the payment receipt",
+        };
+        transporter.sendMail(mailOptions);
+      } catch (err) {
+        throw new ErrorHandler(500, "Cannot send mail");
+      }
+      try {
+        const bucket = new mongoose.mongo.GridFSBucket(mongoose.connection.db, {
+          bucketName: "uploads",
+        });
+        const readStream = fs.createReadStream(
+          `/tmp/receipt_${razorpay_paymentID}.pdf`
+        );
+        const uploadStream = bucket.openUploadStream(
+          `receipt_${razorpay_paymentID}.pdf`
+        );
+        readStream.pipe(uploadStream);
+        return res
+          .status(200)
+          .json({ message: "Payment verified successfully" });
+      } catch (err) {
+        throw new ErrorHandler(500, "Cannot save Receipt");
+      }
     }
 
     // IF USING RAZORPAY WEBHOOKS
@@ -123,7 +139,7 @@ const verifyorder = async (req, res, next) => {
     // } else {
     //   res.status(400).json({ message: "Payment verification failed" });
     // }
-    else{
+    else {
       throw new ErrorHandler(400, "Payment verification failed");
     }
   } catch (error) {
