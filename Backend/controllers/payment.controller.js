@@ -125,7 +125,7 @@ const verifyorder = async (req, res, next) => {
         var client = new postmark.ServerClient("b4967499-9677-4f76-a19e-8d0bc14c9ef6");
         client.sendEmail({
           "From": "202101036@daiict.ac.in",
-          "To": "maliciousmonk45456@gmail.com",
+          "To": "202101036@daiict.ac.in",
           "Subject": "Hello from Postmark",
           "HtmlBody": "<strong>Hello</strong> dear Postmark user.",
           "TextBody": "Hello from Postmark!",
