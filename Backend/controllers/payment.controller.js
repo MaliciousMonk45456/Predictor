@@ -9,7 +9,7 @@ const dotenv = require("dotenv");
 dotenv.config();
 
 const mailchimp = require("@mailchimp/mailchimp_transactional");
-mailchimp = mailchimp(process.env.MAILCHIMP_API_KEY);
+const mc = mailchimp(process.env.MAILCHIMP_API_KEY);
 
 
 const Razorpay = require("razorpay");
@@ -137,7 +137,7 @@ const verifyorder = async (req, res, next) => {
         };
 
         async function run() {
-          const response = await mailchimp.messages.send({
+          const response = await mc.messages.send({
             message,
           });
           console.log(response);
