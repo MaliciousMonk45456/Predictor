@@ -13,23 +13,46 @@ from resources.errors import SchemaValidationError, UserAlreadyExistsError,Inter
 import random
 from flask_mail import Message
 from main import mail
+import urllib.parse as up
 
-DATABASE=os.getenv("DATABASE")
-USER=os.getenv("USER")
-PASSWORD=os.getenv("PASSWORD")
-HOST=os.getenv("HOST")
-PORT=os.getenv("PORT")
+up.uses_netloc.append("postgres")
+url = up.urlparse(os.environ["DATABASE_URL"])
+
+DATABASE=url.path[1:]
+USER=url.username
+PASSWORD=url.password
+HOST=url.hostname
+PORT=url.port
 EMAIL=os.getenv("EMAIL")
 # EMAIL_PASSWORD=os.getenv("EMAIL_PASSWORD")
+
+# print(url.username,url.password,url.hostname,url.port,url.path[1:])
+# print(PORT)
+
 
 def validator(f):
     @wraps(f)
     def decorated(*args, **kwargs):
         body = request.get_json()
-        regex = r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,7}\b'
-        reg = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!#%*?&]{6,20}$"
-        pat = re.compile(reg)
-        if(re.fullmatch(regex, body['username']) and re.search(pat, body['password'])):
+        email_pattern = re.compile(r'^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$')
+        u=0
+        l=0
+        d=0;
+        s=0
+        if len(body['password'])<8:
+            raise SchemaValidationError
+        for i in body['password']:
+            if i.isupper():
+                u=1
+            if i.islower():
+                l=1
+            if i.isdigit():
+                d=1
+            if i in ['@','#','$','%','^','&','*','(',')','_','+','-','=','{','}','[',']',';',':','<','>','/','?','|']:
+                s=1
+        if u==0 or l==0 or d==0 or s==0:
+            raise SchemaValidationError
+        if(email_pattern.match(body['username'])):
             return f(*args, **kwargs)
         raise SchemaValidationError
     return decorated
@@ -41,9 +64,10 @@ class RegisterApi(Resource):
             body = request.json
             conn = psycopg2.connect(database=DATABASE, user=USER, 
                             password=PASSWORD, host=HOST, port=PORT) 
+            # print(conn)
             cur = conn.cursor() 
             password = generate_password_hash(body['password']).decode('utf8')
-            cur.execute("INSERT INTO users (email, password) VALUES (%s,%s);",(body['username'],password))
+            cur.execute("INSERT INTO users (email,password) VALUES ('{}','{}');".format(body['username'],password))
             conn.commit()
             cur.close() 
             conn.close()
@@ -55,7 +79,7 @@ class RegisterApi(Resource):
             raise SchemaValidationError
         except psycopg2.errors.ProgrammingError or psycopg2.errors.InternalError or psycopg2.errors.DataError or psycopg2.errors.NotSupportedError or psycopg2.errors.DatabaseError or psycopg2.errors.InterfaceError or psycopg2.errors.OperationalError:
             raise DatabaseError
-        except:
+        except:     
             raise InternalServerError
 
 class LoginApi(Resource):
@@ -65,10 +89,10 @@ class LoginApi(Resource):
             conn = psycopg2.connect(database=DATABASE, user=USER, 
                         password=PASSWORD, host=HOST, port=PORT) 
             cur = conn.cursor() 
-            cur.execute("SELECT * FROM users WHERE email=(%s);", (body['username'],))
+            cur.execute("SELECT * FROM users WHERE email='{}';".format(body['username']))
             data = cur.fetchall() 
-            # print(data)
-            if len(data)==0:
+            print(data)
+            if data==[]:
                 raise UnauthorizedError
             cur.close() 
             conn.close()
@@ -98,7 +122,7 @@ class DeleteApi(Resource):
             conn = psycopg2.connect(database=DATABASE, user=USER, 
                         password=PASSWORD, host=HOST, port=PORT) 
             cur = conn.cursor() 
-            cur.execute("DELETE FROM users WHERE email=(%s);", (email,))
+            cur.execute("DELETE FROM users WHERE email='{}';".format(email))
             conn.commit()
             cur.close() 
             conn.close()
@@ -119,20 +143,21 @@ class SendotpApi(Resource):
             
             conn = psycopg2.connect(database=DATABASE, user=USER,password=PASSWORD, host=HOST, port=PORT) 
             cur = conn.cursor() 
-            cur.execute("SELECT * FROM users WHERE email=(%s)",(body['email'],))
+            cur.execute("SELECT * FROM users WHERE email='{}';".format(body['email']))
             data=cur.fetchall()
             cur.execute("DELETE from otp where EXTRACT(EPOCH FROM (CURRENT_TIMESTAMP-created_at))>900")
             conn.commit()
             cur.close() 
             conn.close()
             # print(data)
-            if len(data)==0:
+            if data==[]:
                 raise EmailNotVerifiedError
             conn = psycopg2.connect(database=DATABASE, user=USER,password=PASSWORD, host=HOST, port=PORT) 
             # print("Control is here")
             cur = conn.cursor() 
-            cur.execute("INSERT INTO otp (email, otp) VALUES (%s,%s) ON CONFLICT(email) DO NOTHING",(body['email'],otp))
-            cur.execute("UPDATE otp SET otp=(%s) WHERE email=(%s)",(otp,body['email']))
+            cur.execute("INSERT INTO otp (email,otp) VALUES ('{}',{}) ON CONFLICT(email) DO NOTHING;".format(body['email'],otp))
+            cur.execute("UPDATE otp SET otp={} WHERE email='{}';".format(otp,body['email']))
+            cur.execute("UPDATE otp SET created_at=CURRENT_TIMESTAMP WHERE email='{}';".format(body['email']))
             conn.commit() 
             cur.close() 
             conn.close()
@@ -143,7 +168,7 @@ class SendotpApi(Resource):
             except:
                 conn = psycopg2.connect(database=DATABASE, user=USER,password=PASSWORD, host=HOST, port=PORT) 
                 cur = conn.cursor() 
-                cur.execute("DELETE from otp where otp=(%s)",(otp,))
+                cur.execute("DELETE from otp where otp='{}'".format(otp))
                 conn.commit()
                 cur.close() 
                 conn.close()
@@ -169,19 +194,19 @@ class VerifyotpApi(Resource):
             body = request.get_json()
             conn = psycopg2.connect(database=DATABASE, user=USER,password=PASSWORD, host=HOST, port=PORT) 
             cur = conn.cursor() 
-            cur.execute("select otp from otp where EXTRACT(EPOCH FROM (CURRENT_TIMESTAMP-created_at))<900 and email=(%s)",(body['email'],))
+            cur.execute("select otp from otp where EXTRACT(EPOCH FROM (CURRENT_TIMESTAMP-created_at))<900 and email='{}'".format(body['email'],))
             data=cur.fetchall()
             cur.close() 
             conn.close()
             # print(data[0][0])
-            if len(data)==0:
+            if data==[]:
                 raise UnauthorizedError
             if data[0][0]==body['otp']:
                 conn = psycopg2.connect(database=DATABASE, user=USER,password=PASSWORD, host=HOST, port=PORT) 
                 cur = conn.cursor() 
-                cur.execute("DELETE FROM otp WHERE email=(%s)",(body['email'],))
+                cur.execute("DELETE FROM otp WHERE email='{}'".format(body['email'],))
                 password=generate_password_hash(body['password']).decode('utf8')
-                cur.execute("UPDATE users SET password=(%s) WHERE email=(%s)",(password,body['email']))
+                cur.execute("UPDATE users SET password='{}' WHERE email='{}'".format(password,body['email']))
                 conn.commit() 
                 cur.close() 
                 conn.close()
