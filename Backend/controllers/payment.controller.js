@@ -8,10 +8,19 @@ const fs = require("fs");
 const dotenv = require("dotenv");
 dotenv.config();
 
-const { Resend } = require("resend");
-
 const Razorpay = require("razorpay");
 const crypto = require("crypto");
+
+const transporter = nodemailer.createTransport({
+  // service: "gmail",
+  port: 587,
+  host: "smtp.gmail.com",
+  auth: {
+    user: process.env.EMAIL,
+    pass: process.env.PASSWORD,
+  },
+  secure: true,
+});
 
 const instance = new Razorpay({
   key_id: process.env.KEY_ID,
@@ -85,51 +94,20 @@ const verifyorder = async (req, res, next) => {
       }
 
       try {
-        //   const transporter = nodemailer.createTransport({
-        //     // service: "gmail",
-        //     port: 465,
-        //     host: "smtp.gmail.com",
-        //     auth: {
-        //       user: process.env.EMAIL,
-        //       pass: process.env.PASSWORD,
-        //     },
-        //     secure: true,
-        //   });
-        //   const mailOptions = {
-        //     from: process.env.EMAIL,
-        //     to: payment.email,
-        //     subject: "Payment Receipt",
-        //     attachments: [
-        //       {
-        //         filename: `receipt_${razorpay_paymentID}.pdf`,
-        //         path: `/tmp/receipt_${razorpay_paymentID}.pdf`,
-        //       },
-        //     ],
-        //     text: "Please find attached, the payment receipt",
-        //   };
-        //   // console.log(payment)
-        //   // transporter.sendMail(mailOptions);
-
-        //   await new Promise((resolve, reject) => {
-        //     // send mail
-        //     transporter.sendMail(mailOptions, (err, info) => {
-        //         if (err) {
-        //             console.error(err);
-        //             reject(err);
-        //         } else {
-        //             console.log(info);
-        //             resolve(info);
-        //         }
-        //     });
-        // });
-        const resend = new Resend(process.env.RESEND_API_KEY);
-
-        resend.emails.send({
-          from: "recommendationsystem00@gmail.com",
-          to: payment.email,
-          subject: "Payment Receipt",
-          html: "<p>Congrats on sending your <strong>first email</strong>!</p>",
-        });
+          const mailOptions = {
+            from: process.env.EMAIL,
+            to: payment.email,
+            subject: "Payment Receipt",
+            attachments: [
+              {
+                filename: `receipt_${razorpay_paymentID}.pdf`,
+                path: `/tmp/receipt_${razorpay_paymentID}.pdf`,
+              },
+            ],
+            text: "Please find attached, the payment receipt",
+          };
+          // console.log(payment)
+          await transporter.sendMail(mailOptions);
       } catch (err) {
         throw new ErrorHandler(500, "Cannot send mail");
       }

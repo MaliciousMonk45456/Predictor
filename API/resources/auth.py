@@ -91,7 +91,6 @@ class LoginApi(Resource):
             cur = conn.cursor() 
             cur.execute("SELECT * FROM users WHERE email='{}';".format(body['username']))
             data = cur.fetchall() 
-            print(data)
             if data==[]:
                 raise UnauthorizedError
             cur.close() 

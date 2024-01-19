@@ -3,7 +3,7 @@ from flask_restful import Resource
 import numpy as np
 import pandas as pd
 import joblib
-from tensorflow.keras.models import load_model
+from keras.models import load_model
 # from sklearn.preprocessing import StandardScaler, MinMaxScaler
 from flask_jwt_extended import jwt_required
 from resources.errors import InternalServerError,SchemaValidationError,MovieNotFoundError
