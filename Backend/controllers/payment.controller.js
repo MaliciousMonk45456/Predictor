@@ -8,7 +8,7 @@ const fs = require("fs");
 const dotenv = require("dotenv");
 dotenv.config();
 
-const mailchimp = require("@mailchimp/mailchimp_transactional")(process.env.MAILCHIMP_API_KEY);
+var postmark = require("postmark");
 
 const Razorpay = require("razorpay");
 const crypto = require("crypto");
@@ -122,21 +122,15 @@ const verifyorder = async (req, res, next) => {
         //         }
         //     });
         // });
-        const message = {
-          from_email: "recommendationsystem00@gmail.com",
-          subject: "Payment Receipt",
-          text: "Please find attached, the payment receipt",
-          to: [
-            {
-              email: payment.email,
-              type: "to",
-            },
-          ],
-        };
-        const response = await mailchimp.messages.send({
-          message,
+        var client = new postmark.ServerClient("b4967499-9677-4f76-a19e-8d0bc14c9ef6");
+        client.sendEmail({
+          "From": "202101036@daiict.ac.in",
+          "To": "maliciousmonk45456@gmail.com",
+          "Subject": "Hello from Postmark",
+          "HtmlBody": "<strong>Hello</strong> dear Postmark user.",
+          "TextBody": "Hello from Postmark!",
+          "MessageStream": "outbound"
         });
-        console.log(response);
       } catch (err) {
         throw new ErrorHandler(500, "Cannot send mail");
       }
