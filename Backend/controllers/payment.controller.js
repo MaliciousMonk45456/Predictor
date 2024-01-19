@@ -8,7 +8,7 @@ const fs = require("fs");
 const dotenv = require("dotenv");
 dotenv.config();
 
-const mailchimp = require("@mailchimp/mailchimp_transactional")(process.env.MAILCHIMP_API_KEY);
+const mailchimp = require("mailchimp_transactional")(process.env.MAILCHIMP_API_KEY);
 
 const Razorpay = require("razorpay");
 const crypto = require("crypto");
