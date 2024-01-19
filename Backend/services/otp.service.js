@@ -5,6 +5,16 @@ const Authuser = require("../models/authuser.model");
 const otpgenerator = require("otp-generator");
 const nodemailer = require("nodemailer");
 
+const transporter = nodemailer.createTransport({
+  // service: "gmail",
+  port: 587,
+  host: "smtp.gmail.com",
+  auth: {
+    user: process.env.EMAIL,
+    pass: process.env.PASSWORD,
+  },
+});
+
 const sendOtp = async (req, res, next) => {
   try {
     const errors = validationResult(req);
@@ -30,20 +40,13 @@ const sendOtp = async (req, res, next) => {
     } else {
       await Otp.create({ email, otp });
     }
-    const transporter = nodemailer.createTransport({
-      service: "gmail",
-      auth: {
-        user: process.env.EMAIL,
-        pass: process.env.PASSWORD,
-      },
-    });
     const mailOptions = {
       from: process.env.EMAIL,
       to: email,
       subject: "OTP for login",
       text: `Your OTP for login is ${otp}`,
     };
-    transporter.sendMail(mailOptions);
+    await transporter.sendMail(mailOptions);
     return res.status(200).json({ message: "OTP sent" });
   } catch (error) {
     next(error);
