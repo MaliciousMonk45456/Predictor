@@ -4,11 +4,13 @@ const nodemailer = require("nodemailer");
 const PDFDocument = require("pdfkit");
 const mongoose = require("mongoose");
 const fs = require("fs");
-import mailchimp from "@mailchimp/mailchimp_transactional";
-const mailchimp = mailchimp("991609e42128b98fa3dd787f4e02a42f-us21");
 
 const dotenv = require("dotenv");
 dotenv.config();
+
+const mailchimp = require("@mailchimp/mailchimp_transactional");
+mailchimp = mailchimp(process.env.MAILCHIMP_API_KEY);
+
 
 const Razorpay = require("razorpay");
 const crypto = require("crypto");
