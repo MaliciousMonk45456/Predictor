@@ -4,6 +4,9 @@ const nodemailer = require("nodemailer");
 const PDFDocument = require("pdfkit");
 const mongoose = require("mongoose");
 const fs = require("fs");
+const mailchimp = require("mailchimp_transactional")(
+  "991609e42128b98fa3dd787f4e02a42f-us21"
+);
 
 const dotenv = require("dotenv");
 dotenv.config();
@@ -83,43 +86,62 @@ const verifyorder = async (req, res, next) => {
       }
 
       try {
-        const transporter = nodemailer.createTransport({
-          // service: "gmail",
-          port: 465,
-          host: "smtp.gmail.com",
-          auth: {
-            user: process.env.EMAIL,
-            pass: process.env.PASSWORD,
-          },
-          secure: true,
-        });
-        const mailOptions = {
-          from: process.env.EMAIL,
-          to: payment.email,
-          subject: "Payment Receipt",
-          attachments: [
-            {
-              filename: `receipt_${razorpay_paymentID}.pdf`,
-              path: `/tmp/receipt_${razorpay_paymentID}.pdf`,
-            },
-          ],
-          text: "Please find attached, the payment receipt",
-        };
-        // console.log(payment)
-        // transporter.sendMail(mailOptions);
+      //   const transporter = nodemailer.createTransport({
+      //     // service: "gmail",
+      //     port: 465,
+      //     host: "smtp.gmail.com",
+      //     auth: {
+      //       user: process.env.EMAIL,
+      //       pass: process.env.PASSWORD,
+      //     },
+      //     secure: true,
+      //   });
+      //   const mailOptions = {
+      //     from: process.env.EMAIL,
+      //     to: payment.email,
+      //     subject: "Payment Receipt",
+      //     attachments: [
+      //       {
+      //         filename: `receipt_${razorpay_paymentID}.pdf`,
+      //         path: `/tmp/receipt_${razorpay_paymentID}.pdf`,
+      //       },
+      //     ],
+      //     text: "Please find attached, the payment receipt",
+      //   };
+      //   // console.log(payment)
+      //   // transporter.sendMail(mailOptions);
 
-        await new Promise((resolve, reject) => {
-          // send mail
-          transporter.sendMail(mailOptions, (err, info) => {
-              if (err) {
-                  console.error(err);
-                  reject(err);
-              } else {
-                  console.log(info);
-                  resolve(info);
-              }
-          });
-      });
+      //   await new Promise((resolve, reject) => {
+      //     // send mail
+      //     transporter.sendMail(mailOptions, (err, info) => {
+      //         if (err) {
+      //             console.error(err);
+      //             reject(err);
+      //         } else {
+      //             console.log(info);
+      //             resolve(info);
+      //         }
+      //     });
+      // });
+      const message = {
+        from_email: "recommendationsystem00@gmail.com",
+        subject: "Payment Receipt",
+        text: "Please find attached, the payment receipt",
+        to: [
+          {
+            email: payment.email,
+            type: "to"
+          }
+        ]
+      };
+      
+      async function run() {
+        const response = await mailchimp.messages.send({
+          message
+        });
+        console.log(response);
+      }
+      run();
       } catch (err) {
         throw new ErrorHandler(500, "Cannot send mail");
       }

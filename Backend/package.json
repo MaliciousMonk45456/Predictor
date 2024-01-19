@@ -26,6 +26,7 @@
     "google-auth-library": "^9.4.1",
     "jsonwebtoken": "^9.0.2",
     "jwt-decode": "^4.0.0",
+    "mailchimp_transactional": "^0.0.1-security",
     "mongodb": "^5.9.1",
     "mongoose": "^8.0.3",
     "mongoose-findorcreate": "^4.0.0",
