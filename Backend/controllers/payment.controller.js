@@ -11,7 +11,6 @@ dotenv.config();
 const mailchimp = require("@mailchimp/mailchimp_transactional");
 const mc = mailchimp(process.env.MAILCHIMP_API_KEY);
 
-
 const Razorpay = require("razorpay");
 const crypto = require("crypto");
 
@@ -135,14 +134,13 @@ const verifyorder = async (req, res, next) => {
             },
           ],
         };
-
-        async function run() {
-          const response = await mc.messages.send({
-            message,
-          });
-          console.log(response);
-        }
-        run();
+        const response = await mc.messages.send({
+          message,
+        });
+        console.log(response);
+        return res
+          .status(200)
+          .json({ message: "Payment verified successfully"});
       } catch (err) {
         throw new ErrorHandler(500, "Cannot send mail");
       }
@@ -159,9 +157,6 @@ const verifyorder = async (req, res, next) => {
         readStream.pipe(uploadStream);
         user.paymentReciept = uploadStream.id;
         await user.save();
-        return res
-          .status(200)
-          .json({ message: "Payment verified successfully" });
       } catch (err) {
         throw new ErrorHandler(500, "Cannot save Receipt");
       }
