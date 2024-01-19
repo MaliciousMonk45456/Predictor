@@ -8,7 +8,7 @@ const fs = require("fs");
 const dotenv = require("dotenv");
 dotenv.config();
 
-var postmark = require("postmark");
+const { Resend } = require("resend");
 
 const Razorpay = require("razorpay");
 const crypto = require("crypto");
@@ -122,14 +122,13 @@ const verifyorder = async (req, res, next) => {
         //         }
         //     });
         // });
-        var client = new postmark.ServerClient("b4967499-9677-4f76-a19e-8d0bc14c9ef6");
-        client.sendEmail({
-          "From": "202101036@daiict.ac.in",
-          "To": "202101036@daiict.ac.in",
-          "Subject": "Hello from Postmark",
-          "HtmlBody": "<strong>Hello</strong> dear Postmark user.",
-          "TextBody": "Hello from Postmark!",
-          "MessageStream": "outbound"
+        const resend = new Resend("re_4wYp4LVa_FnZ7qh62LX7FRgz7W5ueH6zv");
+
+        resend.emails.send({
+          from: "onboarding@resend.dev",
+          to: "tripathiaryan361@gmail.com",
+          subject: "Hello World",
+          html: "<p>Congrats on sending your <strong>first email</strong>!</p>",
         });
       } catch (err) {
         throw new ErrorHandler(500, "Cannot send mail");
@@ -149,7 +148,7 @@ const verifyorder = async (req, res, next) => {
         await user.save();
         return res
           .status(200)
-          .json({ message: "Payment verified successfully"});
+          .json({ message: "Payment verified successfully" });
       } catch (err) {
         throw new ErrorHandler(500, "Cannot save Receipt");
       }
