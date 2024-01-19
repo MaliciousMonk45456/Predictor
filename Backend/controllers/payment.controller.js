@@ -137,9 +137,6 @@ const verifyorder = async (req, res, next) => {
           message,
         });
         console.log(response);
-        return res
-          .status(200)
-          .json({ message: "Payment verified successfully"});
       } catch (err) {
         throw new ErrorHandler(500, "Cannot send mail");
       }
@@ -156,6 +153,9 @@ const verifyorder = async (req, res, next) => {
         readStream.pipe(uploadStream);
         user.paymentReciept = uploadStream.id;
         await user.save();
+        return res
+          .status(200)
+          .json({ message: "Payment verified successfully"});
       } catch (err) {
         throw new ErrorHandler(500, "Cannot save Receipt");
       }
