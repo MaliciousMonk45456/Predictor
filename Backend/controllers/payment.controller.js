@@ -109,6 +109,7 @@ const verifyorder = async (req, res, next) => {
           // console.log(payment)
           await transporter.sendMail(mailOptions);
       } catch (err) {
+        console.log(err); 
         throw new ErrorHandler(500, "Cannot send mail");
       }
       try {
