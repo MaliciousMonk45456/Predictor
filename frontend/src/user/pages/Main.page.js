@@ -202,6 +202,7 @@ const Main = () => {
             </div>
           )}
           <Button link="/addmovie" text="Add Movie Genre" />
+          <Button link="/joinroom" text="Chat" />
         </div>
       )}
     </div>
